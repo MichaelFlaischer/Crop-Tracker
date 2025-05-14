@@ -1,31 +1,34 @@
 import { MongoClient } from 'mongodb'
+import { config } from '../config/index.js'
+import { logger } from './logger.service.js'
 
 export const dbService = {
-    getCollection
+  getCollection,
 }
 
-// Connection URL
-const url = 'mongodb://localhost:27017'
-
-// Database Name
-const dbName = 'tester_db'
-
-var dbConn = null
+let dbConn = null
 
 async function getCollection(collectionName) {
+  try {
     const db = await _connect()
-    return db.collection(collectionName)
+    const collection = db.collection(collectionName)
+    return collection
+  } catch (err) {
+    logger.error('❌ Failed to get Mongo collection:', err)
+    throw err
+  }
 }
 
 async function _connect() {
-    if (dbConn) return dbConn
-    try {
-        const client = await MongoClient.connect(url)
-        const db = client.db(dbName)
-        dbConn = db
-        return db
-    } catch (err) {
-        console.log('Cannot Connect to DB', err)
-        throw err
-    }
+  if (dbConn) return dbConn
+  try {
+    const client = await MongoClient.connect(config.dbURL)
+    const db = client.db(config.dbName)
+    dbConn = db
+    logger.info(`✅ Connected to MongoDB Atlas: ${config.dbName}`)
+    return db
+  } catch (err) {
+    logger.error('❌ Cannot Connect to DB:', err)
+    throw err
+  }
 }
