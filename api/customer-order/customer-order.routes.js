@@ -1,12 +1,10 @@
 import express from 'express'
 import { getCustomerOrders, getCustomerOrderById, addCustomerOrder, updateCustomerOrder, deleteCustomerOrder } from './customer-order.controller.js'
 
-const router = express.Router()
+export const customerorderRoutes = express.Router()
 
-router.get('/', getCustomerOrders)
-router.get('/:id', getCustomerOrderById)
-router.post('/', addCustomerOrder)
-router.put('/:id', updateCustomerOrder)
-router.delete('/:id', deleteCustomerOrder)
-
-export default router
+customerorderRoutes.get('/', getCustomerOrders)
+customerorderRoutes.get('/:id', getCustomerOrderById)
+customerorderRoutes.post('/', addCustomerOrder)
+customerorderRoutes.put('/:id', updateCustomerOrder)
+customerorderRoutes.delete('/:id', deleteCustomerOrder)

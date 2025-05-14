@@ -1,12 +1,10 @@
 import express from 'express'
 import { getWarehouses, getWarehouseById, addWarehouse, updateWarehouse, deleteWarehouse } from './warehouse.controller.js'
 
-const router = express.Router()
+export const warehouseRoutes = express.Router()
 
-router.get('/', getWarehouses)
-router.get('/:id', getWarehouseById)
-router.post('/', addWarehouse)
-router.put('/:id', updateWarehouse)
-router.delete('/:id', deleteWarehouse)
-
-export default router
+warehouseRoutes.get('/', getWarehouses)
+warehouseRoutes.get('/:id', getWarehouseById)
+warehouseRoutes.post('/', addWarehouse)
+warehouseRoutes.put('/:id', updateWarehouse)
+warehouseRoutes.delete('/:id', deleteWarehouse)

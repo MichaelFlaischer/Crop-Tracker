@@ -1,12 +1,10 @@
 import express from 'express'
-import { getDeliveries, getDeliveryById, addDelivery, updateDelivery, deleteDelivery } from './delivery.controller.js'
+import { getDeliveries, getDeliveryById, addDelivery, updateDelivery, removeDelivery } from './delivery.controller.js'
 
-const router = express.Router()
+export const deliveryRoutes = express.Router()
 
-router.get('/', getDeliveries)
-router.get('/:id', getDeliveryById)
-router.post('/', addDelivery)
-router.put('/:id', updateDelivery)
-router.delete('/:id', deleteDelivery)
-
-export default router
+deliveryRoutes.get('/', getDeliveries)
+deliveryRoutes.get('/:id', getDeliveryById)
+deliveryRoutes.post('/', addDelivery)
+deliveryRoutes.put('/:id', updateDelivery)
+deliveryRoutes.delete('/:id', removeDelivery)

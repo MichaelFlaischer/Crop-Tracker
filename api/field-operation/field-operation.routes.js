@@ -1,12 +1,10 @@
 import express from 'express'
 import { getFieldOperations, getFieldOperationById, addFieldOperation, updateFieldOperation, deleteFieldOperation } from './field-operation.controller.js'
 
-const router = express.Router()
+export const fieldoperationRoutes = express.Router()
 
-router.get('/', getFieldOperations)
-router.get('/:id', getFieldOperationById)
-router.post('/', addFieldOperation)
-router.put('/:id', updateFieldOperation)
-router.delete('/:id', deleteFieldOperation)
-
-export default router
+fieldoperationRoutes.get('/', getFieldOperations)
+fieldoperationRoutes.get('/:id', getFieldOperationById)
+fieldoperationRoutes.post('/', addFieldOperation)
+fieldoperationRoutes.put('/:id', updateFieldOperation)
+fieldoperationRoutes.delete('/:id', deleteFieldOperation)

@@ -7,12 +7,10 @@ import {
   deleteItemAllowed,
 } from './items-allowed-in-warehouse.controller.js'
 
-const router = express.Router()
+export const itemsallowedinwarehouseRoutes = express.Router()
 
-router.get('/', getItemsAllowedInWarehouse)
-router.get('/:id', getItemAllowedById)
-router.post('/', addItemAllowed)
-router.put('/:id', updateItemAllowed)
-router.delete('/:id', deleteItemAllowed)
-
-export default router
+itemsallowedinwarehouseRoutes.get('/', getItemsAllowedInWarehouse)
+itemsallowedinwarehouseRoutes.get('/:id', getItemAllowedById)
+itemsallowedinwarehouseRoutes.post('/', addItemAllowed)
+itemsallowedinwarehouseRoutes.put('/:id', updateItemAllowed)
+itemsallowedinwarehouseRoutes.delete('/:id', deleteItemAllowed)

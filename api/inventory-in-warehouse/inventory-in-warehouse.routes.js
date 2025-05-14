@@ -7,12 +7,10 @@ import {
   deleteInventoryItem,
 } from './inventory-in-warehouse.controller.js'
 
-const router = express.Router()
+export const inventoryinwarehouseRoutes = express.Router()
 
-router.get('/', getInventoryInWarehouse)
-router.get('/:id', getInventoryItemById)
-router.post('/', addInventoryItem)
-router.put('/:id', updateInventoryItem)
-router.delete('/:id', deleteInventoryItem)
-
-export default router
+inventoryinwarehouseRoutes.get('/', getInventoryInWarehouse)
+inventoryinwarehouseRoutes.get('/:id', getInventoryItemById)
+inventoryinwarehouseRoutes.post('/', addInventoryItem)
+inventoryinwarehouseRoutes.put('/:id', updateInventoryItem)
+inventoryinwarehouseRoutes.delete('/:id', deleteInventoryItem)

@@ -23,58 +23,59 @@ export const logger = {
 }
 
 function _getTime() {
-  const now = new Date()
-  return now.toLocaleString('he') // תאריך בפורמט עברי
+  return new Date().toLocaleString('he')
 }
 
 function _isError(e) {
   return e && e.stack && e.message
 }
 
-async function _doLog(level, ...args) {
-  let req = null
-  let userId = 0
+function _toLogString(arg) {
+  if (typeof arg === 'string') return arg
+  if (_isError(arg)) return `${arg.message}\n${arg.stack}`
+  if (arg instanceof Promise) return 'Promise'
+  return JSON.stringify(arg, null, 2)
+}
 
-  // בדיקה אם הפרמטר הראשון הוא request
-  if (args[0]?.cookies) {
-    req = args.shift()
-    try {
-      userId = +req.cookies.loginToken?.userId || 0
-    } catch {
-      userId = 0
-    }
-  }
+function _doLog(level, ...args) {
+  const msg = args.map(_toLogString).join(' | ')
+  const line = `${_getTime()} - ${level} - ${msg}\n`
 
-  const strs = args.map((arg) => {
-    if (typeof arg === 'string') return arg
-    if (_isError(arg)) return `${arg.message} | ${arg.stack}`
-    if (arg instanceof Promise) return 'Promise'
-    return JSON.stringify(arg)
-  })
-
-  const msg = strs.join(' | ')
-  const timestamp = new Date()
-  const line = `${_getTime()} - ${level} - userId: ${userId} - ${msg}\n`
-
-  // הדפסה למסך
+  // 1. הדפסת הלוג לקונסול
   console.log(line)
 
-  // כתיבה לקובץ
+  // 2. כתיבה לקובץ
   fs.appendFile('./logs/backend.log', line, (err) => {
-    if (err) console.error('FATAL: cannot write to log file')
+    if (err) console.error('FATAL: cannot write to log file', err)
   })
 
-  // כתיבה למסד נתונים
+  // 3. כתיבה למסד
+  const logEntry = {
+    userId: _extractUserId(args),
+    level,
+    message: msg,
+    timestamp: new Date(),
+    logData: msg,
+  }
+
+  _saveToDb(logEntry)
+}
+
+async function _saveToDb(entry) {
   try {
-    const collection = await getCollection('logs')
-    await collection.insertOne({
-      userId,
-      level,
-      message: msg,
-      timestamp,
-      logData: msg, // לשמירה בשדה logData כמו במבנה שלך
-    })
+    const collection = await getCollection('Logs')
+    await collection.insertOne(entry)
   } catch (err) {
     console.error('Failed to write log to MongoDB:', err)
   }
+}
+
+// אופציונלי – מנסה לחלץ userId מתוך פרמטרים אם קיים
+function _extractUserId(args) {
+  for (const arg of args) {
+    if (arg && typeof arg === 'object' && 'userId' in arg) {
+      return arg.userId
+    }
+  }
+  return null
 }

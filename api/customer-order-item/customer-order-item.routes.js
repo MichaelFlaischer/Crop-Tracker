@@ -7,12 +7,10 @@ import {
   deleteCustomerOrderItem,
 } from './customer-order-item.controller.js'
 
-const router = express.Router()
+export const customerorderitemRoutes = express.Router()
 
-router.get('/', getCustomerOrderItems)
-router.get('/:id', getCustomerOrderItemById)
-router.post('/', addCustomerOrderItem)
-router.put('/:id', updateCustomerOrderItem)
-router.delete('/:id', deleteCustomerOrderItem)
-
-export default router
+customerorderitemRoutes.get('/', getCustomerOrderItems)
+customerorderitemRoutes.get('/:id', getCustomerOrderItemById)
+customerorderitemRoutes.post('/', addCustomerOrderItem)
+customerorderitemRoutes.put('/:id', updateCustomerOrderItem)
+customerorderitemRoutes.delete('/:id', deleteCustomerOrderItem)

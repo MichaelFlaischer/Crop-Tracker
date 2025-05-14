@@ -8,3 +8,5 @@ roleRoutes.get('/:id', getRoleById)
 roleRoutes.post('/', addRole)
 roleRoutes.put('/:id', updateRole)
 roleRoutes.delete('/:id', deleteRole)
+
+export default roleRoutes

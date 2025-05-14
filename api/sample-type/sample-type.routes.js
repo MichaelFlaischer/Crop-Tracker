@@ -1,12 +1,10 @@
 import express from 'express'
 import { getSampleTypes, getSampleTypeById, addSampleType, updateSampleType, deleteSampleType } from './sample-type.controller.js'
 
-const router = express.Router()
+export const sampletypeRoutes = express.Router()
 
-router.get('/', getSampleTypes)
-router.get('/:id', getSampleTypeById)
-router.post('/', addSampleType)
-router.put('/:id', updateSampleType)
-router.delete('/:id', deleteSampleType)
-
-export default router
+sampletypeRoutes.get('/', getSampleTypes)
+sampletypeRoutes.get('/:id', getSampleTypeById)
+sampletypeRoutes.post('/', addSampleType)
+sampletypeRoutes.put('/:id', updateSampleType)
+sampletypeRoutes.delete('/:id', deleteSampleType)

@@ -7,12 +7,10 @@ import {
   deleteDeliveryAssignment,
 } from './delivery-assignment.controller.js'
 
-const router = express.Router()
+export const deliveryassignmentRoutes = express.Router()
 
-router.get('/', getDeliveryAssignments)
-router.get('/:id', getDeliveryAssignmentById)
-router.post('/', addDeliveryAssignment)
-router.put('/:id', updateDeliveryAssignment)
-router.delete('/:id', deleteDeliveryAssignment)
-
-export default router
+deliveryassignmentRoutes.get('/', getDeliveryAssignments)
+deliveryassignmentRoutes.get('/:id', getDeliveryAssignmentById)
+deliveryassignmentRoutes.post('/', addDeliveryAssignment)
+deliveryassignmentRoutes.put('/:id', updateDeliveryAssignment)
+deliveryassignmentRoutes.delete('/:id', deleteDeliveryAssignment)

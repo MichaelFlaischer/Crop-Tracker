@@ -1,12 +1,10 @@
 import express from 'express'
 import { getInventoryAlerts, getInventoryAlertById, addInventoryAlert, updateInventoryAlert, deleteInventoryAlert } from './inventory-alert.controller.js'
 
-const router = express.Router()
+export const inventoryalertRoutes = express.Router()
 
-router.get('/', getInventoryAlerts)
-router.get('/:id', getInventoryAlertById)
-router.post('/', addInventoryAlert)
-router.put('/:id', updateInventoryAlert)
-router.delete('/:id', deleteInventoryAlert)
-
-export default router
+inventoryalertRoutes.get('/', getInventoryAlerts)
+inventoryalertRoutes.get('/:id', getInventoryAlertById)
+inventoryalertRoutes.post('/', addInventoryAlert)
+inventoryalertRoutes.put('/:id', updateInventoryAlert)
+inventoryalertRoutes.delete('/:id', deleteInventoryAlert)

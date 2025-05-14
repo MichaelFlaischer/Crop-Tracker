@@ -1,12 +1,10 @@
 import express from 'express'
 import { getWeighingReports, getWeighingReportById, addWeighingReport, updateWeighingReport, deleteWeighingReport } from './weighing-report.controller.js'
 
-const router = express.Router()
+export const weighingreportRoutes = express.Router()
 
-router.get('/', getWeighingReports)
-router.get('/:id', getWeighingReportById)
-router.post('/', addWeighingReport)
-router.put('/:id', updateWeighingReport)
-router.delete('/:id', deleteWeighingReport)
-
-export default router
+weighingreportRoutes.get('/', getWeighingReports)
+weighingreportRoutes.get('/:id', getWeighingReportById)
+weighingreportRoutes.post('/', addWeighingReport)
+weighingreportRoutes.put('/:id', updateWeighingReport)
+weighingreportRoutes.delete('/:id', deleteWeighingReport)

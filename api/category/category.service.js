@@ -1,7 +1,7 @@
-import { dbService } from '../../db.service.js'
+import { dbService } from '../../services/db.service.js'
 import { ObjectId } from 'mongodb'
 
-const COLLECTION = 'category'
+const COLLECTION = 'Categories'
 
 export const categoryService = {
   query,

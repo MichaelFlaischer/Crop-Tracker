@@ -16,3 +16,5 @@ carRoutes.delete('/:id', requireAdmin, requireAuth, removeCar)
 
 carRoutes.post('/:id/msg', requireAuth, addCarMsg)
 carRoutes.delete('/:id/msg/:msgId', requireAdmin, requireAuth, removeCarMsg)
+
+export default carRoutes
