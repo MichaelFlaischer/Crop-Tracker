@@ -1,5 +1,4 @@
 import fs from 'fs'
-import { getCollection } from './db.service.js'
 
 const logsDir = './logs'
 if (!fs.existsSync(logsDir)) {
@@ -8,7 +7,7 @@ if (!fs.existsSync(logsDir)) {
 
 export const logger = {
   debug(...args) {
-    if (process.env.NODE_ENV === 'production') return
+    if (process.env.NODE_NEV === 'production') return
     _doLog('DEBUG', ...args)
   },
   info(...args) {
@@ -23,59 +22,30 @@ export const logger = {
 }
 
 function _getTime() {
-  return new Date().toLocaleString('he')
+  let now = new Date()
+  return now.toLocaleString('he') //define the time format
 }
 
 function _isError(e) {
   return e && e.stack && e.message
 }
 
-function _toLogString(arg) {
-  if (typeof arg === 'string') return arg
-  if (_isError(arg)) return `${arg.message}\n${arg.stack}`
-  if (arg instanceof Promise) return 'Promise'
-  return JSON.stringify(arg, null, 2)
-}
-
 function _doLog(level, ...args) {
-  const msg = args.map(_toLogString).join(' | ')
-  const line = `${_getTime()} - ${level} - ${msg}\n`
-
-  // 1. הדפסת הלוג לקונסול
-  console.log(line)
-
-  // 2. כתיבה לקובץ
-  fs.appendFile('./logs/backend.log', line, (err) => {
-    if (err) console.error('FATAL: cannot write to log file', err)
+  const strs = args.map((arg) => {
+    if (typeof arg === 'string') {
+    } else if (_isError(arg)) {
+    } else if (arg instanceof Promise) {
+      arg = 'Promise'
+    } else {
+      arg = JSON.stringify(arg)
+    }
+    return arg
   })
 
-  // 3. כתיבה למסד
-  const logEntry = {
-    userId: _extractUserId(args),
-    level,
-    message: msg,
-    timestamp: new Date(),
-    logData: msg,
-  }
-
-  _saveToDb(logEntry)
-}
-
-async function _saveToDb(entry) {
-  try {
-    const collection = await getCollection('Logs')
-    await collection.insertOne(entry)
-  } catch (err) {
-    console.error('Failed to write log to MongoDB:', err)
-  }
-}
-
-// אופציונלי – מנסה לחלץ userId מתוך פרמטרים אם קיים
-function _extractUserId(args) {
-  for (const arg of args) {
-    if (arg && typeof arg === 'object' && 'userId' in arg) {
-      return arg.userId
-    }
-  }
-  return null
+  var line = strs.join(' | ')
+  line = `${_getTime()} - ${level} - ${line} \n`
+  console.log(line)
+  fs.appendFile('./logs/backend.log', line, (err) => {
+    if (err) console.log('FATAL: cannot write to log file')
+  })
 }

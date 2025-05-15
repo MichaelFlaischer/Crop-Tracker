@@ -73,16 +73,32 @@ async function update(user) {
       Username: user.Username,
       FullName: user.FullName,
       RoleID: user.RoleID,
+      RoleName: user.RoleName,
       Email: user.Email,
       PhoneNumber: user.PhoneNumber,
       StartDate: user.StartDate,
       Salary: user.Salary,
       Address: user.Address,
       Status: user.Status,
-      isAdmin: user.isAdmin,
+      IsAdmin: user.IsAdmin,
     }
+
+    if (user.Password && typeof user.Password === 'string' && user.Password.length >= 6) {
+      const saltRounds = 10
+      const hashedPassword = await bcrypt.hash(user.Password, saltRounds)
+      userToSave.Password = hashedPassword
+    }
+
     const collection = await dbService.getCollection('Employees')
-    await collection.updateOne({ _id: userToSave._id }, { $set: userToSave })
+
+    await collection.updateOne(
+      { _id: userToSave._id },
+      {
+        $set: userToSave,
+        $unset: { isAdmin: '' },
+      }
+    )
+
     return userToSave
   } catch (err) {
     logger.error(`cannot update user ${user._id}`, err)
