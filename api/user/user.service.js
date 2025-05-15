@@ -125,7 +125,7 @@ async function add(user) {
       Salary: user.Salary || 0,
       Address: user.Address || '',
       Status: user.Status || 'Active',
-      isAdmin: user.isAdmin || false,
+      IsAdmin: user.IsAdmin === true || user.IsAdmin === 'true',
     }
 
     const collection = await dbService.getCollection('Employees')

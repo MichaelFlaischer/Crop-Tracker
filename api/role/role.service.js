@@ -20,9 +20,12 @@ async function getById(roleId) {
 }
 
 async function add(role) {
+  console.log('add-add-add-add-add-add')
+
   const roleToAdd = {
-    RoleName: role.RoleName,
-    Description: role.Description || '',
+    RoleName: role.name,
+    Description: role.description || '',
+    IsAdmin: role.isAdmin === true || role.isAdmin === 'true',
   }
   const collection = await dbService.getCollection('Roles')
   const { insertedId } = await collection.insertOne(roleToAdd)
@@ -30,13 +33,17 @@ async function add(role) {
 }
 
 async function update(role) {
+  console.log('update-update-update-update-update-update')
+  console.log(role)
+
   const roleToUpdate = {
     RoleName: role.RoleName,
-    Description: role.Description,
+    Description: role.Description || '',
+    IsAdmin: role.IsAdmin === true || role.IsAdmin === 'true',
   }
   const collection = await dbService.getCollection('Roles')
   await collection.updateOne({ _id: ObjectId.createFromHexString(role._id) }, { $set: roleToUpdate })
-  return role
+  return { ...roleToUpdate, _id: role._id }
 }
 
 async function remove(roleId) {
