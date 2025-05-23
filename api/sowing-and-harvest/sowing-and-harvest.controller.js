@@ -1,4 +1,4 @@
-import { query, getById, add, update, remove } from './sowing-and-harvest.service.js'
+import { query, getById, add, update, remove, addHarvestLog } from './sowing-and-harvest.service.js'
 
 export async function getSowingAndHarvests(req, res) {
   try {
@@ -47,5 +47,15 @@ export async function deleteSowingAndHarvest(req, res) {
   } catch (err) {
     console.error('Failed to delete record', err)
     res.status(500).send('Failed to delete record')
+  }
+}
+
+export async function addHarvestToLog(req, res) {
+  try {
+    const updatedRecord = await addHarvestLog(req.params.id, req.body)
+    res.json(updatedRecord)
+  } catch (err) {
+    console.error('Failed to add harvest log', err)
+    res.status(500).send('Failed to add harvest log')
   }
 }

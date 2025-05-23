@@ -6,25 +6,32 @@ export async function query() {
   return await collection.find().toArray()
 }
 
-export async function getById(warehouseId) {
-  const collection = await dbService.getCollection('Warehouses')
-  return await collection.findOne({ _id: new ObjectId(warehouseId) })
-}
-
 export async function add(warehouse) {
   const collection = await dbService.getCollection('Warehouses')
   const res = await collection.insertOne(warehouse)
   return { ...warehouse, _id: res.insertedId }
 }
 
+export async function getById(warehouseId) {
+  const collection = await dbService.getCollection('Warehouses')
+  const id = toMongoId(warehouseId)
+  return await collection.findOne({ _id: id })
+}
+
 export async function update(warehouseId, warehouse) {
   const collection = await dbService.getCollection('Warehouses')
   delete warehouse._id
-  await collection.updateOne({ _id: new ObjectId(warehouseId) }, { $set: warehouse })
-  return { ...warehouse, _id: new ObjectId(warehouseId) }
+  const id = toMongoId(warehouseId)
+  await collection.updateOne({ _id: id }, { $set: warehouse })
+  return { ...warehouse, _id: id }
 }
 
 export async function remove(warehouseId) {
   const collection = await dbService.getCollection('Warehouses')
-  await collection.deleteOne({ _id: new ObjectId(warehouseId) })
+  const id = toMongoId(warehouseId)
+  await collection.deleteOne({ _id: id })
+}
+
+function toMongoId(id) {
+  return ObjectId.isValid(id) ? new ObjectId(id) : id
 }
