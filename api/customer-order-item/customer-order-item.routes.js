@@ -1,16 +1,35 @@
 import express from 'express'
 import {
-  getCustomerOrderItems,
-  getCustomerOrderItemById,
-  addCustomerOrderItem,
-  updateCustomerOrderItem,
-  deleteCustomerOrderItem,
+  getOrderItems,
+  getOrderItemByIdController,
+  getItemsByOrderId,
+  getItemsByCropAndStatus,
+  addOrderItemController,
+  updateOrderItemController,
+  deleteOrderItemController,
+  removeItemsByOrderId,
 } from './customer-order-item.controller.js'
 
-export const customerorderitemRoutes = express.Router()
+export const customerOrderItemRoutes = express.Router()
 
-customerorderitemRoutes.get('/', getCustomerOrderItems)
-customerorderitemRoutes.get('/:id', getCustomerOrderItemById)
-customerorderitemRoutes.post('/', addCustomerOrderItem)
-customerorderitemRoutes.put('/:id', updateCustomerOrderItem)
-customerorderitemRoutes.delete('/:id', deleteCustomerOrderItem)
+// שליפת כל הפריטים
+customerOrderItemRoutes.get('/', getOrderItems)
+
+// שליפת פריט לפי מזהה
+customerOrderItemRoutes.get('/:id', getOrderItemByIdController)
+
+// שליפת פריטים לפי מזהה הזמנה
+customerOrderItemRoutes.get('/by-order/:orderId', getItemsByOrderId)
+
+// שליפת פריטים לפי סוג יבול וסטטוס הזמנה
+customerOrderItemRoutes.get('/by-crop/:cropId/status/:status', getItemsByCropAndStatus)
+
+// הוספת פריט חדש
+customerOrderItemRoutes.post('/', addOrderItemController)
+
+// עדכון פריט קיים
+customerOrderItemRoutes.put('/:id', updateOrderItemController)
+
+customerOrderItemRoutes.delete('/by-order/:orderId', removeItemsByOrderId)
+// מחיקת פריט
+customerOrderItemRoutes.delete('/:id', deleteOrderItemController)

@@ -1,8 +1,8 @@
-import { query, getById, add, update, remove } from './customer-order.service.js'
+import { queryOrders, getOrderById, getOrdersByCustomerId, addOrder, updateOrder, removeOrder } from './customer-order.service.js'
 
 export async function getCustomerOrders(req, res) {
   try {
-    const orders = await query()
+    const orders = await queryOrders()
     res.json(orders)
   } catch (err) {
     console.error('Failed to get customer orders', err)
@@ -12,7 +12,7 @@ export async function getCustomerOrders(req, res) {
 
 export async function getCustomerOrderById(req, res) {
   try {
-    const order = await getById(req.params.id)
+    const order = await getOrderById(req.params.id)
     res.json(order)
   } catch (err) {
     console.error('Failed to get order by ID', err)
@@ -20,9 +20,19 @@ export async function getCustomerOrderById(req, res) {
   }
 }
 
+export async function getOrdersByCustomer(req, res) {
+  try {
+    const orders = await getOrdersByCustomerId(req.params.customerId)
+    res.json(orders)
+  } catch (err) {
+    console.error('Failed to get orders by customer ID', err)
+    res.status(500).send('Failed to get customer orders')
+  }
+}
+
 export async function addCustomerOrder(req, res) {
   try {
-    const order = await add(req.body)
+    const order = await addOrder(req.body)
     res.json(order)
   } catch (err) {
     console.error('Failed to add order', err)
@@ -32,7 +42,7 @@ export async function addCustomerOrder(req, res) {
 
 export async function updateCustomerOrder(req, res) {
   try {
-    const order = await update(req.params.id, req.body)
+    const order = await updateOrder(req.params.id, req.body)
     res.json(order)
   } catch (err) {
     console.error('Failed to update order', err)
@@ -42,7 +52,7 @@ export async function updateCustomerOrder(req, res) {
 
 export async function deleteCustomerOrder(req, res) {
   try {
-    await remove(req.params.id)
+    await removeOrder(req.params.id)
     res.sendStatus(204)
   } catch (err) {
     console.error('Failed to delete order', err)

@@ -13,7 +13,7 @@ import { categoryRoutes } from './api/category/category.routes.js'
 import { cropRoutes } from './api/crop/crop.routes.js'
 import { customerRoutes } from './api/customer/customer.routes.js'
 import { customerorderRoutes } from './api/customer-order/customer-order.routes.js'
-import { customerorderitemRoutes } from './api/customer-order-item/customer-order-item.routes.js'
+import { customerOrderItemRoutes } from './api/customer-order-item/customer-order-item.routes.js'
 import { deliveryRoutes } from './api/delivery/delivery.routes.js'
 import { deliveryassignmentRoutes } from './api/delivery-assignment/delivery-assignment.routes.js'
 import { employeesintasksRoutes } from './api/employees-in-tasks/employees-in-tasks.routes.js'
@@ -79,7 +79,7 @@ app.use('/api/category', categoryRoutes)
 app.use('/api/crop', cropRoutes)
 app.use('/api/customer', customerRoutes)
 app.use('/api/customer-order', customerorderRoutes)
-app.use('/api/customer-order-item', customerorderitemRoutes)
+app.use('/api/customer-order-item', customerOrderItemRoutes)
 app.use('/api/delivery', deliveryRoutes)
 app.use('/api/delivery-assignment', deliveryassignmentRoutes)
 app.use('/api/employees-in-tasks', employeesintasksRoutes)

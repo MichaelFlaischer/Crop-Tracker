@@ -1,30 +1,47 @@
 import { dbService } from '../../services/db.service.js'
 import { ObjectId } from 'mongodb'
 
-export async function query() {
-  const collection = await dbService.getCollection('CustomerOrders')
+const ORDER_COLLECTION = 'CustomerOrders'
+
+export async function queryOrders() {
+  const collection = await dbService.getCollection(ORDER_COLLECTION)
   return await collection.find().toArray()
 }
 
-export async function getById(orderId) {
-  const collection = await dbService.getCollection('CustomerOrders')
-  return await collection.findOne({ _id: new ObjectId(orderId) })
+export async function getOrderById(orderId) {
+  const collection = await dbService.getCollection(ORDER_COLLECTION)
+  return await collection.findOne({ _id: toMongoId(orderId) })
 }
 
-export async function add(order) {
-  const collection = await dbService.getCollection('CustomerOrders')
+export async function getOrdersByCustomerId(customerId) {
+  const collection = await dbService.getCollection(ORDER_COLLECTION)
+  return await collection.find({ customerId: toMongoId(customerId) }).toArray()
+}
+
+export async function addOrder(order) {
+  const collection = await dbService.getCollection(ORDER_COLLECTION)
   const res = await collection.insertOne(order)
   return { ...order, _id: res.insertedId }
 }
 
-export async function update(orderId, order) {
-  const collection = await dbService.getCollection('CustomerOrders')
+export async function updateOrder(orderId, order) {
+  const collection = await dbService.getCollection(ORDER_COLLECTION)
   delete order._id
-  await collection.updateOne({ _id: new ObjectId(orderId) }, { $set: order })
-  return { ...order, _id: new ObjectId(orderId) }
+  await collection.updateOne({ _id: toMongoId(orderId) }, { $set: order })
+  return { ...order, _id: toMongoId(orderId) }
 }
 
-export async function remove(orderId) {
-  const collection = await dbService.getCollection('CustomerOrders')
-  await collection.deleteOne({ _id: new ObjectId(orderId) })
+export async function removeOrder(orderId) {
+  const collection = await dbService.getCollection(ORDER_COLLECTION)
+  await collection.deleteOne({ _id: toMongoId(orderId) })
+}
+
+function toMongoId(id) {
+  if (typeof id === 'number') return id
+  if (!isNaN(id) && /^\d+$/.test(id)) return +id
+  try {
+    return new ObjectId(id)
+  } catch {
+    throw new Error('Invalid ID format')
+  }
 }

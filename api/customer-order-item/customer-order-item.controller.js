@@ -1,51 +1,92 @@
-import { query, getById, add, update, remove } from './customer-order-item.service.js'
+import {
+  queryOrderItems,
+  getOrderItemById,
+  getOrderItemsByOrderId,
+  getOrderItemsByCropAndStatus,
+  addOrderItem,
+  updateOrderItem,
+  removeOrderItem,
+  removeByOrderId,
+} from './customer-order-item.service.js'
 
-export async function getCustomerOrderItems(req, res) {
+export async function getOrderItems(req, res) {
   try {
-    const items = await query()
+    const items = await queryOrderItems()
     res.json(items)
   } catch (err) {
-    console.error('Failed to get customer order items', err)
-    res.status(500).send('Failed to get items')
+    console.error('❌ Failed to get all order items:', err)
+    res.status(500).send('Failed to get order items')
   }
 }
 
-export async function getCustomerOrderItemById(req, res) {
+export async function getOrderItemByIdController(req, res) {
   try {
-    const item = await getById(req.params.id)
+    const item = await getOrderItemById(req.params.id)
     res.json(item)
   } catch (err) {
-    console.error('Failed to get item by ID', err)
-    res.status(500).send('Failed to get item')
+    console.error(`❌ Failed to get order item by ID ${req.params.id}:`, err)
+    res.status(500).send('Failed to get order item')
   }
 }
 
-export async function addCustomerOrderItem(req, res) {
+export async function getItemsByOrderId(req, res) {
   try {
-    const item = await add(req.body)
+    const items = await getOrderItemsByOrderId(req.params.orderId)
+    res.json(items)
+  } catch (err) {
+    console.error(`❌ Failed to get items by order ID ${req.params.orderId}:`, err)
+    res.status(500).send('Failed to get order items by order ID')
+  }
+}
+
+export async function getItemsByCropAndStatus(req, res) {
+  try {
+    const { cropId, status } = req.params
+    const items = await getOrderItemsByCropAndStatus(cropId, status)
+    res.json(items)
+  } catch (err) {
+    console.error(`❌ Failed to get items for crop ${req.params.cropId} and status ${req.params.status}:`, err)
+    res.status(500).send('Failed to get items by crop and status')
+  }
+}
+
+export async function addOrderItemController(req, res) {
+  try {
+    const item = await addOrderItem(req.body)
     res.json(item)
   } catch (err) {
-    console.error('Failed to add item', err)
-    res.status(500).send('Failed to add item')
+    console.error('❌ Failed to add order item:', err)
+    res.status(500).send('Failed to add order item')
   }
 }
 
-export async function updateCustomerOrderItem(req, res) {
+export async function updateOrderItemController(req, res) {
   try {
-    const item = await update(req.params.id, req.body)
+    const item = await updateOrderItem(req.params.id, req.body)
     res.json(item)
   } catch (err) {
-    console.error('Failed to update item', err)
-    res.status(500).send('Failed to update item')
+    console.error(`❌ Failed to update order item ID ${req.params.id}:`, err)
+    res.status(500).send('Failed to update order item')
   }
 }
 
-export async function deleteCustomerOrderItem(req, res) {
+export async function deleteOrderItemController(req, res) {
   try {
-    await remove(req.params.id)
+    await removeOrderItem(req.params.id)
     res.sendStatus(204)
   } catch (err) {
-    console.error('Failed to delete item', err)
-    res.status(500).send('Failed to delete item')
+    console.error(`❌ Failed to delete order item ID ${req.params.id}:`, err)
+    res.status(500).send('Failed to delete order item')
+  }
+}
+
+export async function removeItemsByOrderId(req, res) {
+  try {
+    const orderId = req.params.orderId
+    await removeByOrderId(orderId)
+    res.sendStatus(204)
+  } catch (err) {
+    console.error('❌ Failed to remove items by orderId:', err)
+    res.status(500).send('Failed to remove items by orderId')
   }
 }
