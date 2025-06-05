@@ -29,6 +29,7 @@ import { taskRoutes } from './api/task/task.routes.js'
 import { truckRoutes } from './api/truck/truck.routes.js'
 import { warehouseRoutes } from './api/warehouse/warehouse.routes.js'
 import { weighingreportRoutes } from './api/weighing-report/weighing-report.routes.js'
+import { seasonRoutes } from './api/seasons/seasons.routes.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -95,6 +96,7 @@ app.use('/api/task', taskRoutes)
 app.use('/api/truck', truckRoutes)
 app.use('/api/warehouse', warehouseRoutes)
 app.use('/api/weighing-report', weighingreportRoutes)
+app.use('/api/seasons', seasonRoutes)
 
 // SPA fallback
 app.get('/*all', (req, res) => {
