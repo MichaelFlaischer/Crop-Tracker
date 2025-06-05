@@ -10,12 +10,12 @@ export async function query() {
 
 export async function getById(seasonId) {
   const collection = await dbService.getCollection(COLLECTION_NAME)
-  return await collection.findOne({ _id: new ObjectId(seasonId) })
+  return await collection.findOne({ _id: seasonId })
 }
 
 export async function update(seasonId, season) {
   const collection = await dbService.getCollection(COLLECTION_NAME)
   delete season._id
-  await collection.updateOne({ _id: new ObjectId(seasonId) }, { $set: season })
-  return { ...season, _id: new ObjectId(seasonId) }
+  await collection.updateOne({ _id: seasonId }, { $set: season })
+  return { ...season, _id: seasonId }
 }
