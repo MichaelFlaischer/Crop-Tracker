@@ -23,7 +23,7 @@ export async function getOrderItemById(itemId) {
 
 export async function getOrderItemsByOrderId(orderId) {
   const collection = await dbService.getCollection(ITEM_COLLECTION)
-  return await collection.find({ customerOrderId: toMongoId(orderId) }).toArray()
+  return await collection.find({ $or: [{ customerOrderId: toMongoId(orderId) }, { customerOrderId: orderId }] }).toArray()
 }
 
 export async function getOrderItemsByCropAndStatus(cropId, status) {
@@ -65,28 +65,28 @@ export async function addOrderItem(item) {
   return { ...newItem, _id: res.insertedId }
 }
 
-export async function updateOrderItem(itemId, item) {
-  const updatedItem = {
-    ...item,
-    customerOrderId: toMongoId(item.customerOrderId),
-    cropId: toMongoId(item.cropId),
-    quantity: Number(item.quantity),
-    price: Number(item.price) || 0,
-    deliveredQuantity: Number(item.deliveredQuantity) || 0,
-    warehouseBreakdown: (item.warehouseBreakdown || []).map((w) => {
-      if (!w.warehouseId || typeof w.quantity !== 'number') {
-        throw new Error('Invalid warehouse breakdown entry')
-      }
-      return {
-        warehouseId: toMongoId(w.warehouseId),
-        quantity: Number(w.quantity),
-      }
-    }),
+export async function updateOrderItem(itemId, itemUpdates) {
+  const collection = await dbService.getCollection(ITEM_COLLECTION)
+
+  const existingItem = await collection.findOne({ _id: toMongoId(itemId) })
+  if (!existingItem) throw new Error('Item not found')
+
+  const mergedItem = {
+    ...existingItem,
+    ...itemUpdates,
+    cropId: toMongoId(existingItem.cropId),
+    customerOrderId: toMongoId(existingItem.customerOrderId),
+    quantity: Number(existingItem.quantity),
+    price: Number(existingItem.price),
+    deliveredQuantity: Number(itemUpdates.deliveredQuantity) || 0,
+    warehouseBreakdown: (itemUpdates.warehouseBreakdown || []).map((w) => ({
+      warehouseId: toMongoId(w.warehouseId),
+      quantity: Number(w.quantity),
+    })),
   }
 
-  const collection = await dbService.getCollection(ITEM_COLLECTION)
-  await collection.updateOne({ _id: toMongoId(itemId) }, { $set: updatedItem })
-  return { ...updatedItem, _id: toMongoId(itemId) }
+  await collection.updateOne({ _id: toMongoId(itemId) }, { $set: mergedItem })
+  return { ...mergedItem, _id: toMongoId(itemId) }
 }
 
 export async function removeOrderItem(itemId) {
