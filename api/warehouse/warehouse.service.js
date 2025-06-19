@@ -10,8 +10,20 @@ export async function query() {
 
 export async function add(warehouse) {
   const collection = await dbService.getCollection(COLLECTION_NAME)
-  const res = await collection.insertOne(warehouse)
-  return { ...warehouse, _id: res.insertedId }
+
+  const cleanWarehouse = {
+    ...warehouse,
+    cropsStock: warehouse.cropsStock || [],
+    notes: warehouse.notes || '',
+    location: warehouse.location || {
+      region: '',
+      coordinates: { lat: 0, lng: 0 },
+    },
+    capacity: warehouse.capacity || 0,
+  }
+
+  const res = await collection.insertOne(cleanWarehouse)
+  return { ...cleanWarehouse, _id: res.insertedId }
 }
 
 export async function getById(warehouseId) {
@@ -67,15 +79,19 @@ export async function updateCropQuantity(warehouseId, cropId, diff) {
   const id = toMongoId(warehouseId)
   const cropKey = toMongoId(cropId)
 
-  await collection.updateOne({ _id: id, 'cropsStock.cropId': { $in: [cropKey, String(cropKey)] } }, { $inc: { 'cropsStock.$.quantity': diff } })
+  const numericDiff = Number(diff)
+  if (isNaN(numericDiff)) throw new Error('Invalid diff value')
+
+  await collection.updateOne(
+    { _id: id, 'cropsStock.cropId': { $in: [cropKey, String(cropKey)] } },
+    {
+      $inc: { 'cropsStock.$.quantity': numericDiff },
+      $set: { 'cropsStock.$.lastUpdated': new Date() },
+    }
+  )
 }
 
 function toMongoId(id) {
-  if (typeof id === 'number') return id
-  if (!isNaN(id) && /^\d+$/.test(id)) return +id
-  try {
-    return new ObjectId(id)
-  } catch {
-    throw new Error('Invalid ID format')
-  }
+  if (ObjectId.isValid(id)) return new ObjectId(id)
+  throw new Error('Invalid ID format')
 }

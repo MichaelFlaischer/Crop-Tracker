@@ -4,12 +4,10 @@ import { ObjectId } from 'mongodb'
 const COLLECTION_NAME = 'Customers'
 
 function toMongoId(id) {
-  if (!isNaN(id)) return +id
-  try {
+  if (typeof id === 'string' && id.length === 24 && /^[0-9a-fA-F]{24}$/.test(id)) {
     return new ObjectId(id)
-  } catch (err) {
-    throw new Error('Invalid ID format')
   }
+  throw new Error('Invalid ID format')
 }
 
 export async function query() {

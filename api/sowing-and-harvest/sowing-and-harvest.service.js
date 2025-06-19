@@ -54,8 +54,8 @@ export async function add(data) {
   const newRecord = {
     fieldId: isValidObjectId(data.fieldId) ? new ObjectId(data.fieldId) : data.fieldId,
     cropId: isValidObjectId(data.cropId) ? new ObjectId(data.cropId) : data.cropId,
-    sowingDate: new Date(data.sowingDate),
-    harvestDate: data.harvestDate ? new Date(data.harvestDate) : null,
+    sowingDate: isValidDate(data.sowingDate) ? new Date(data.sowingDate) : null,
+    harvestDate: isValidDate(data.harvestDate) ? new Date(data.harvestDate) : null,
     isActive: true,
     harvestLogs: [],
     notes: data.notes || '',
@@ -71,12 +71,12 @@ export async function update(id, data) {
 
   if (data.fieldId && isValidObjectId(data.fieldId)) data.fieldId = new ObjectId(data.fieldId)
   if (data.cropId && isValidObjectId(data.cropId)) data.cropId = new ObjectId(data.cropId)
-  if (data.sowingDate) data.sowingDate = new Date(data.sowingDate)
-  if (data.harvestDate) data.harvestDate = new Date(data.harvestDate)
+  if (isValidDate(data.sowingDate)) data.sowingDate = new Date(data.sowingDate)
+  if (isValidDate(data.harvestDate)) data.harvestDate = new Date(data.harvestDate)
 
   const filter = isValidObjectId(id) ? { _id: new ObjectId(id) } : { _id: id }
-  await collection.updateOne(filter, { $set: data })
-  return { ...data, _id: id }
+  const updatedDoc = await collection.findOneAndUpdate(filter, { $set: data }, { returnDocument: 'after' })
+  return updatedDoc.value
 }
 
 export async function remove(id) {
@@ -114,4 +114,7 @@ export async function addHarvestLog(id, log) {
 
 function isValidObjectId(id) {
   return typeof id === 'string' && id.length === 24 && /^[0-9a-fA-F]{24}$/.test(id)
+}
+function isValidDate(date) {
+  return date && !isNaN(new Date(date).getTime())
 }

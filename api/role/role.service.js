@@ -9,23 +9,28 @@ export const roleService = {
   remove,
 }
 
+function toMongoId(id) {
+  if (typeof id === 'string' && id.length === 24 && /^[0-9a-fA-F]{24}$/.test(id)) {
+    return new ObjectId(id)
+  }
+  throw new Error('Invalid ID format')
+}
+
 async function query() {
   const collection = await dbService.getCollection('Roles')
-  return await collection.find().sort({ RoleName: 1 }).toArray()
+  return await collection.find().sort({ roleName: 1 }).toArray()
 }
 
 async function getById(roleId) {
   const collection = await dbService.getCollection('Roles')
-  return await collection.findOne({ _id: ObjectId.createFromHexString(roleId) })
+  return await collection.findOne({ _id: toMongoId(roleId) })
 }
 
 async function add(role) {
-  console.log('add-add-add-add-add-add')
-
   const roleToAdd = {
-    RoleName: role.name,
-    Description: role.description || '',
-    IsAdmin: role.isAdmin === true || role.isAdmin === 'true',
+    roleName: role.roleName,
+    description: role.description || '',
+    isAdmin: role.isAdmin === true || role.isAdmin === 'true',
   }
   const collection = await dbService.getCollection('Roles')
   const { insertedId } = await collection.insertOne(roleToAdd)
@@ -33,20 +38,17 @@ async function add(role) {
 }
 
 async function update(role) {
-  console.log('update-update-update-update-update-update')
-  console.log(role)
-
   const roleToUpdate = {
-    RoleName: role.RoleName,
-    Description: role.Description || '',
-    IsAdmin: role.IsAdmin === true || role.IsAdmin === 'true',
+    roleName: role.roleName,
+    description: role.description || '',
+    isAdmin: role.isAdmin === true || role.isAdmin === 'true',
   }
   const collection = await dbService.getCollection('Roles')
-  await collection.updateOne({ _id: ObjectId.createFromHexString(role._id) }, { $set: roleToUpdate })
+  await collection.updateOne({ _id: toMongoId(role._id) }, { $set: roleToUpdate })
   return { ...roleToUpdate, _id: role._id }
 }
 
 async function remove(roleId) {
   const collection = await dbService.getCollection('Roles')
-  await collection.deleteOne({ _id: ObjectId.createFromHexString(roleId) })
+  await collection.deleteOne({ _id: toMongoId(roleId) })
 }

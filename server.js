@@ -9,26 +9,16 @@ import { dbService } from './services/db.service.js'
 import { authRoutes } from './api/auth/auth.routes.js'
 import { userRoutes } from './api/user/user.routes.js'
 import { roleRoutes } from './api/role/role.routes.js'
-import { categoryRoutes } from './api/category/category.routes.js'
 import { cropRoutes } from './api/crop/crop.routes.js'
 import { customerRoutes } from './api/customer/customer.routes.js'
 import { customerorderRoutes } from './api/customer-order/customer-order.routes.js'
 import { customerOrderItemRoutes } from './api/customer-order-item/customer-order-item.routes.js'
-import { deliveryRoutes } from './api/delivery/delivery.routes.js'
-import { deliveryassignmentRoutes } from './api/delivery-assignment/delivery-assignment.routes.js'
 import { employeesintasksRoutes } from './api/employees-in-tasks/employees-in-tasks.routes.js'
 import { fieldRoutes } from './api/field/field.routes.js'
 import { fieldoperationRoutes } from './api/field-operation/field-operation.routes.js'
-import { inventoryalertRoutes } from './api/inventory-alert/inventory-alert.routes.js'
-import { inventoryinwarehouseRoutes } from './api/inventory-in-warehouse/inventory-in-warehouse.routes.js'
-import { itemsallowedinwarehouseRoutes } from './api/items-allowed-in-warehouse/items-allowed-in-warehouse.routes.js'
-import { logRoutes } from './api/log/log.routes.js'
-import { sampletypeRoutes } from './api/sample-type/sample-type.routes.js'
 import { sowingandharvestRoutes } from './api/sowing-and-harvest/sowing-and-harvest.routes.js'
 import { taskRoutes } from './api/task/task.routes.js'
-import { truckRoutes } from './api/truck/truck.routes.js'
 import { warehouseRoutes } from './api/warehouse/warehouse.routes.js'
-import { weighingreportRoutes } from './api/weighing-report/weighing-report.routes.js'
 import { seasonRoutes } from './api/seasons/seasons.routes.js'
 
 const __filename = fileURLToPath(import.meta.url)
@@ -76,26 +66,16 @@ app.get('/api/comments', async (req, res) => {
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/role', roleRoutes)
-app.use('/api/category', categoryRoutes)
 app.use('/api/crop', cropRoutes)
 app.use('/api/customer', customerRoutes)
 app.use('/api/customer-order', customerorderRoutes)
 app.use('/api/customer-order-item', customerOrderItemRoutes)
-app.use('/api/delivery', deliveryRoutes)
-app.use('/api/delivery-assignment', deliveryassignmentRoutes)
 app.use('/api/employees-in-tasks', employeesintasksRoutes)
 app.use('/api/field', fieldRoutes)
 app.use('/api/field-operation', fieldoperationRoutes)
-app.use('/api/inventory-alert', inventoryalertRoutes)
-app.use('/api/inventory-in-warehouse', inventoryinwarehouseRoutes)
-app.use('/api/items-allowed-in-warehouse', itemsallowedinwarehouseRoutes)
-app.use('/api/log', logRoutes)
-app.use('/api/sample-type', sampletypeRoutes)
 app.use('/api/sowing-and-harvest', sowingandharvestRoutes)
 app.use('/api/task', taskRoutes)
-app.use('/api/truck', truckRoutes)
 app.use('/api/warehouse', warehouseRoutes)
-app.use('/api/weighing-report', weighingreportRoutes)
 app.use('/api/seasons', seasonRoutes)
 
 // SPA fallback

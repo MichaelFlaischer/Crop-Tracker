@@ -5,13 +5,10 @@ const ITEM_COLLECTION = 'CustomerOrderItems'
 const ORDER_COLLECTION = 'CustomerOrders'
 
 function toMongoId(id) {
-  if (typeof id === 'number') return id
-  if (!isNaN(id) && /^\d+$/.test(id)) return +id
-  try {
+  if (typeof id === 'string' && id.length === 24 && /^[0-9a-fA-F]{24}$/.test(id)) {
     return new ObjectId(id)
-  } catch {
-    throw new Error('Invalid ID format')
   }
+  return id
 }
 
 export async function queryOrderItems() {
@@ -26,18 +23,7 @@ export async function getOrderItemById(itemId) {
 
 export async function getOrderItemsByOrderId(orderId) {
   const collection = await dbService.getCollection(ITEM_COLLECTION)
-
-  const idAsMongo = toMongoId(orderId)
-  const idAsString = String(orderId)
-  const idAsNumber = !isNaN(orderId) ? +orderId : null
-
-  const query = {
-    customerOrderId: {
-      $in: [idAsMongo, idAsString, idAsNumber].filter(Boolean),
-    },
-  }
-
-  return await collection.find(query).toArray()
+  return await collection.find({ customerOrderId: toMongoId(orderId) }).toArray()
 }
 
 export async function getOrderItemsByCropAndStatus(cropId, status) {
@@ -56,16 +42,51 @@ export async function getOrderItemsByCropAndStatus(cropId, status) {
 }
 
 export async function addOrderItem(item) {
+  const newItem = {
+    ...item,
+    customerOrderId: toMongoId(item.customerOrderId),
+    cropId: toMongoId(item.cropId),
+    quantity: Number(item.quantity),
+    price: Number(item.price) || 0,
+    deliveredQuantity: Number(item.deliveredQuantity) || 0,
+    warehouseBreakdown: (item.warehouseBreakdown || []).map((w) => {
+      if (!w.warehouseId || typeof w.quantity !== 'number') {
+        throw new Error('Invalid warehouse breakdown entry')
+      }
+      return {
+        warehouseId: toMongoId(w.warehouseId),
+        quantity: Number(w.quantity),
+      }
+    }),
+  }
+
   const collection = await dbService.getCollection(ITEM_COLLECTION)
-  const res = await collection.insertOne(item)
-  return { ...item, _id: res.insertedId }
+  const res = await collection.insertOne(newItem)
+  return { ...newItem, _id: res.insertedId }
 }
 
 export async function updateOrderItem(itemId, item) {
+  const updatedItem = {
+    ...item,
+    customerOrderId: toMongoId(item.customerOrderId),
+    cropId: toMongoId(item.cropId),
+    quantity: Number(item.quantity),
+    price: Number(item.price) || 0,
+    deliveredQuantity: Number(item.deliveredQuantity) || 0,
+    warehouseBreakdown: (item.warehouseBreakdown || []).map((w) => {
+      if (!w.warehouseId || typeof w.quantity !== 'number') {
+        throw new Error('Invalid warehouse breakdown entry')
+      }
+      return {
+        warehouseId: toMongoId(w.warehouseId),
+        quantity: Number(w.quantity),
+      }
+    }),
+  }
+
   const collection = await dbService.getCollection(ITEM_COLLECTION)
-  delete item._id
-  await collection.updateOne({ _id: toMongoId(itemId) }, { $set: item })
-  return { ...item, _id: toMongoId(itemId) }
+  await collection.updateOne({ _id: toMongoId(itemId) }, { $set: updatedItem })
+  return { ...updatedItem, _id: toMongoId(itemId) }
 }
 
 export async function removeOrderItem(itemId) {
@@ -76,5 +97,5 @@ export async function removeOrderItem(itemId) {
 export async function removeByOrderId(orderId) {
   const collection = await dbService.getCollection(ITEM_COLLECTION)
   const key = toMongoId(orderId)
-  await collection.deleteMany({ customerOrderId: { $in: [key, String(key)] } })
+  await collection.deleteMany({ customerOrderId: key })
 }

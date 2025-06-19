@@ -10,7 +10,7 @@ export async function query() {
 
 export async function getById(operationId) {
   const collection = await dbService.getCollection(COLLECTION_NAME)
-  return await collection.findOne({ _id: new ObjectId(operationId) })
+  return await collection.findOne({ _id: toMongoId(operationId) })
 }
 
 export async function add(operation) {
@@ -22,11 +22,19 @@ export async function add(operation) {
 export async function update(operationId, operation) {
   const collection = await dbService.getCollection(COLLECTION_NAME)
   delete operation._id
-  await collection.updateOne({ _id: new ObjectId(operationId) }, { $set: operation })
-  return { ...operation, _id: new ObjectId(operationId) }
+  const id = toMongoId(operationId)
+  await collection.updateOne({ _id: id }, { $set: operation })
+  return { ...operation, _id: id }
 }
 
 export async function remove(operationId) {
   const collection = await dbService.getCollection(COLLECTION_NAME)
-  await collection.deleteOne({ _id: new ObjectId(operationId) })
+  await collection.deleteOne({ _id: toMongoId(operationId) })
+}
+
+function toMongoId(id) {
+  if (typeof id === 'string' && id.length === 24 && /^[0-9a-fA-F]{24}$/.test(id)) {
+    return new ObjectId(id)
+  }
+  return id
 }
