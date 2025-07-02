@@ -1,7 +1,9 @@
 import bcrypt from 'bcrypt'
 import { MongoClient, ObjectId } from 'mongodb'
+import dotenv from 'dotenv'
+dotenv.config()
 
-const dbURL = 'mongodb+srv://michaelfr25:PAaZDGFxuKmY4y9G@cluster0.z1uktem.mongodb.net/?retryWrites=true&w=majority'
+const dbURL = process.env.MONGODB_URI
 const dbName = 'CropTrackerDB'
 const collectionName = 'Employees'
 const SALT_ROUNDS = 10

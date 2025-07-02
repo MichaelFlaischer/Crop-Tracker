@@ -1,4 +1,7 @@
+import dotenv from 'dotenv'
+dotenv.config()
+
 export default {
-  dbURL: 'mongodb+srv://michaelfr25:PAaZDGFxuKmY4y9G@cluster0.z1uktem.mongodb.net/?retryWrites=true&w=majority',
+  dbURL: process.env.MONGODB_URI,
   dbName: 'CropTrackerDB',
 }
